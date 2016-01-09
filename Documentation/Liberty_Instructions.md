@@ -285,3 +285,26 @@ By default, Acmeair is configured with following variables
 | sslEnabled | Default |
 | threadsAllowedToBlockForConnectionMultiplier | Default |
 
+To change these variables, create ACMEAIR_PROPERTIES variables to point to a properties file (e.g. ACMEAIR_PROPERTIES=/opt/BLUEMIX/acmeair/acmeair.properties)
+
+Sample properties file content:
+
+`userFlightDataRelatedCaching=true
+hostname=localhost
+port=27017
+dbname=acmeair
+username=dbuser
+password=1234
+loader.maxDaysToScheduleFlights=5
+loader.timeout=180
+loader.numCustomers=200
+#connectionsPerHost=
+#minConnectionsPerHost=
+#maxWaitTime=
+#connectTimeout=
+#socketTimeout=
+#socketKeepAlive=
+#sslEnabled=
+#threadsAllowedToBlockForConnectionMultiplier=`
+
+
