@@ -290,14 +290,11 @@ To change these variables, create ACMEAIR_PROPERTIES variables to point to a pro
 Sample properties file content:
 
 ```userFlightDataRelatedCaching=true
-hostname=localhost
+hostname=your.mongo.db.hostname
 port=27017
 dbname=acmeair
 username=dbuser
 password=1234
-loader.maxDaysToScheduleFlights=5
-loader.timeout=180
-loader.numCustomers=200
 #connectionsPerHost=
 #minConnectionsPerHost=
 #maxWaitTime=
