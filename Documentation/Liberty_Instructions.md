@@ -289,7 +289,7 @@ To change these variables, create ACMEAIR_PROPERTIES variables to point to a pro
 
 Sample properties file content:
 
-`userFlightDataRelatedCaching=true
+```userFlightDataRelatedCaching=true
 hostname=localhost
 port=27017
 dbname=acmeair
@@ -305,6 +305,6 @@ loader.numCustomers=200
 #socketTimeout=
 #socketKeepAlive=
 #sslEnabled=
-#threadsAllowedToBlockForConnectionMultiplier=`
+#threadsAllowedToBlockForConnectionMultiplier=```
 
 
