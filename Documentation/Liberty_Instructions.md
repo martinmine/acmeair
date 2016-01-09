@@ -267,18 +267,20 @@ You will now be able to log in, click on the "Acme Air Home" link at either the 
 By default, Acmeair is configured with following variables
 * Flight related data caching - Disabled
 * DB related variables:
-** hostname - localhost
-* port - 27017
-* dbname - acmeair
-* username - None
-* password - None
-* connectionsPerHost - Default
-* minConnectionsPerHost - Default
-* maxWaitTime - Default
-* connectTimeout - Default
-* socketTimeout - Default
-* socketKeepAlive - Default
-* sslEnabled -Default
-* threadsAllowedToBlockForConnectionMultiplier - Default
-
+* 
+| Variable Name       | Value           |
+| ------------- |:-------------:|
+| hostname | localhost |
+| port | 27017 |
+| dbname | acmeair |
+| username | None |
+| password | None |
+| connectionsPerHost | Default |
+| minConnectionsPerHost | Default |
+| maxWaitTime | Default |
+| connectTimeout | Default |
+| socketTimeout | Default |
+| socketKeepAlive | Default |
+| sslEnabled | Default |
+| threadsAllowedToBlockForConnectionMultiplier | Default |
 
