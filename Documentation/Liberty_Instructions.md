@@ -266,7 +266,9 @@ You will now be able to log in, click on the "Acme Air Home" link at either the 
 
 By default, Acmeair is configured with following variables
 * Flight related data caching - Disabled
-* DB related variables:
+* DB related variables
+
+
 | Variable Name       | Value           |
 | ------------- |:-------------:|
 | hostname | localhost |
