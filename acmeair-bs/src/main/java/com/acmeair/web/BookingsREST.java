@@ -54,7 +54,7 @@ public class BookingsREST {
 			if (!oneWay) {
 				bookingIdReturn = bs.bookFlight(userid, retFlightSegId, retFlightId);
 				bookingInfo = "{\"oneWay\":false,\"returnBookingId\":\"" + bookingIdReturn + "\",\"departBookingId\":\"" + bookingIdTo + "\"}";
-			}else {
+			} else {
 				bookingInfo = "{\"oneWay\":true,\"departBookingId\":\"" + bookingIdTo + "\"}";
 			}
 			return Response.ok(bookingInfo).build();
@@ -84,6 +84,7 @@ public class BookingsREST {
 	@Path("/byuser/{user}")
 	@Produces("text/plain")
 	public String getBookingsByUser(@PathParam("user") String user) {
+		
 		try {
 			return  bs.getBookingsByUser(user).toString();
 		}

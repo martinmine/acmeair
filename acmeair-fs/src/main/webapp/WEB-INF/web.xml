@@ -4,6 +4,7 @@
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
   </welcome-file-list>
+
   <filter>
     <filter-name>CookieFilter</filter-name>
     <filter-class>com.acmeair.web.RESTCookieSessionFilter</filter-class>
@@ -13,18 +14,10 @@
     <url-pattern>/rest/api/*</url-pattern>
   </filter-mapping>
   <servlet>
-    <servlet-name>com.acmeair.web.AppConfig</servlet-name>     
-  </servlet>
-  <servlet>
     <servlet-name>com.acmeair.web.AcmeAirApp</servlet-name>
   </servlet>
   <servlet-mapping>
     <servlet-name>com.acmeair.web.AcmeAirApp</servlet-name>
     <url-pattern>/rest/api/*</url-pattern>
   </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>com.acmeair.web.AppConfig</servlet-name>
-    <url-pattern>/rest/info/*</url-pattern>
-  </servlet-mapping>
 </web-app>
-

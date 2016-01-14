@@ -27,6 +27,17 @@ project(':acmeair-webapp') {
     }
 }
 
+project(':acmeair-mainapp') {
+    apply plugin: 'war'
+
+    dependencies {
+        compile project(':acmeair-services')
+        compile project(':acmeair-services-mongo')
+          compile project(':acmeair-loader')
+        providedRuntime 'javax:javaee-web-api:7.0'
+    }
+}
+
 project(':acmeair-as') {
     apply plugin: 'war'
 
@@ -47,7 +58,17 @@ project(':acmeair-cs') {
     }
 }
 
-project(':acmeair-fbs') {
+project(':acmeair-bs') {
+    apply plugin: 'war'
+
+    dependencies {
+        compile project(':acmeair-services')
+        compile project(':acmeair-services-mongo')
+        providedRuntime 'javax:javaee-web-api:7.0'
+    }
+}
+
+project(':acmeair-fs') {
     apply plugin: 'war'
 
     dependencies {

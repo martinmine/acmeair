@@ -28,22 +28,23 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.client.Invocation.Builder;
+import javax.ws.rs.core.Response;
 
 import org.json.simple.JSONObject;
-
-import com.acmeair.service.AuthService;
-import com.acmeair.service.ServiceLocator;
+import org.json.simple.JSONValue;
 
 public class RESTCookieSessionFilter implements Filter {
 	
 	static final String LOGIN_USER = "acmeair.login_user";
+	static String authServiceLocation = System.getenv("AUTH_SERVICE");
 	
-	private static final String LOGIN_PATH = "/rest/api/login";
-	private static final String LOGOUT_PATH = "/rest/api/login/logout";
-	private static final String LOADDB_PATH = "/rest/api/loaddb";
-	
-	private AuthService authService = ServiceLocator.instance().getService(AuthService.class);
-
+	private static final String AUTHCHECK_PATH = "/rest/api/login/authcheck/";
+	private static String SESSIONID_COOKIE_NAME = "sessionid";
+		
 	@Inject
 	BeanManager beanManager;
 	
@@ -56,22 +57,13 @@ public class RESTCookieSessionFilter implements Filter {
 	public void doFilter(ServletRequest req, ServletResponse resp,	FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest request = (HttpServletRequest)req;
 		HttpServletResponse response = (HttpServletResponse)resp;	
-		
-		String path = request.getContextPath() + request.getServletPath() + request.getPathInfo();
-	
-		
-		if (path.endsWith(LOGIN_PATH) || path.endsWith(LOGOUT_PATH) || path.endsWith(LOADDB_PATH)) {
-			// if logging in, logging out, or loading the database, let the request flow
-			chain.doFilter(req, resp);
-			return;
-		}
-		
+						
 		Cookie cookies[] = request.getCookies();
 		Cookie sessionCookie = null;
 
 		if (cookies != null) {
 			for (Cookie c : cookies) {
-				if (c.getName().equals(LoginREST.SESSIONID_COOKIE_NAME)) {
+				if (c.getName().equals(SESSIONID_COOKIE_NAME)) {
 					sessionCookie = c;
 				}
 				if (sessionCookie!=null)
@@ -87,11 +79,32 @@ public class RESTCookieSessionFilter implements Filter {
 				return;
 			}
 			
-			JSONObject jsonObject = authService.validateSession(sessionId);
-			if (jsonObject != null) {
-				String loginUser=(String) jsonObject.get("customerid");				
+			//TODO: Place-Holder, Replace with Service Discovery/Registry
+			if (authServiceLocation != null || authServiceLocation != "") {
+				authServiceLocation = "localhost/acmeair";
+			}
+			
+			// TODO: Do I need to do this every time?
+			ClientBuilder cb = ClientBuilder.newBuilder();
+			Client c = cb.build();		
+			
+			WebTarget t = c.target("http://" + authServiceLocation  + AUTHCHECK_PATH + sessionId);
+			Builder builder = t.request();
+			builder.accept("application/json");
+			
+			Response res = builder.get();
+			String output = res.readEntity(String.class);       
+			c.close();			        
+	    					
+			String loginUser=null;
+			if (output != null) {
+				
+				JSONObject jsonObject = (JSONObject)JSONValue.parse(output);
+				loginUser=(String) jsonObject.get("customerid");
+				
 				request.setAttribute(LOGIN_USER, loginUser);
 				chain.doFilter(req, resp);
+				
 				return;
 			} else {
 				response.sendError(HttpServletResponse.SC_FORBIDDEN);

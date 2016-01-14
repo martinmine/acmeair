@@ -15,11 +15,7 @@
 *******************************************************************************/
 package com.acmeair.web;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 
 import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
@@ -32,27 +28,24 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.client.Invocation.Builder;
+import javax.ws.rs.core.Response;
 
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
-import com.acmeair.service.CustomerService;
-import com.acmeair.service.ServiceLocator;
-
 public class RESTCookieSessionFilter implements Filter {
 	
 	static final String LOGIN_USER = "acmeair.login_user";
-	static final String authServiceLocation = System.getenv("AUTH_SERVICE");
-	static final String authContextRoot = "/acmeair-as/rest/api";
-			
-	private static final String LOGIN_PATH = "/rest/api/login";
-	private static final String LOGOUT_PATH = "/rest/api/login/logout";
-	private static final String LOADDB_PATH = "/rest/api/loaddb";
+	static String authServiceLocation = System.getenv("AUTH_SERVICE");
 	
-	public static String SESSIONID_COOKIE_NAME = "sessionid";
+	private static final String AUTHCHECK_PATH = "/rest/api/login/authcheck/";
 	
-	private CustomerService customerService = ServiceLocator.instance().getService(CustomerService.class);
-
+	private static String SESSIONID_COOKIE_NAME = "sessionid";
+		
 	@Inject
 	BeanManager beanManager;
 	
@@ -65,16 +58,7 @@ public class RESTCookieSessionFilter implements Filter {
 	public void doFilter(ServletRequest req, ServletResponse resp,	FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest request = (HttpServletRequest)req;
 		HttpServletResponse response = (HttpServletResponse)resp;	
-		
-		String path = request.getContextPath() + request.getServletPath() + request.getPathInfo();
-	
-		
-		if (path.endsWith(LOGIN_PATH) || path.endsWith(LOGOUT_PATH) || path.endsWith(LOADDB_PATH)) {
-			// if logging in, logging out, or loading the database, let the request flow
-			chain.doFilter(req, resp);
-			return;
-		}
-		
+						
 		Cookie cookies[] = request.getCookies();
 		Cookie sessionCookie = null;
 
@@ -96,45 +80,35 @@ public class RESTCookieSessionFilter implements Filter {
 				return;
 			}
 			
+			//TODO: Place-Holder, Replace with Service Discovery/Registry
+			if (authServiceLocation != null || authServiceLocation != "") {
+				authServiceLocation = "localhost/acmeair";
+			}
 			
-			if (authServiceLocation != null && authServiceLocation != "") {
-				// Call Auth-Service
-				HttpURLConnection urlc = (HttpURLConnection) new URL("http://"+ authServiceLocation + authContextRoot + "/authtoken/" + sessionId).openConnection();
-
-				// Get result
-				BufferedReader br = new BufferedReader(new InputStreamReader(urlc.getInputStream()));
-				StringBuffer sb = new StringBuffer();
-				String l = null;
-				while ((l=br.readLine())!=null) {
-					sb=sb.append(l);
-				}
-				br.close();
-		    					
-				String loginUser=null;
-				if (urlc.getResponseCode() == 200) {
-					
-					JSONObject jsonObject = (JSONObject)JSONValue.parse(sb.toString());
-					loginUser=(String) jsonObject.get("customerid");
-					
-					request.setAttribute(LOGIN_USER, loginUser);
-					chain.doFilter(req, resp);
-					
-					return;
-				} else {
-					response.sendError(HttpServletResponse.SC_FORBIDDEN);
-					return;
-				}
+			ClientBuilder cb = ClientBuilder.newBuilder();
+			Client c = cb.build();		
+			
+			WebTarget t = c.target("http://" + authServiceLocation  + AUTHCHECK_PATH + sessionId);
+			Builder builder = t.request();
+			builder.accept("application/json");
+			
+			Response res = builder.get();
+			String output = res.readEntity(String.class);       
+			c.close();			        
+	    					
+			String loginUser=null;
+			if (output != null) {
+				
+				JSONObject jsonObject = (JSONObject)JSONValue.parse(output);
+				loginUser=(String) jsonObject.get("customerid");
+				
+				request.setAttribute(LOGIN_USER, loginUser);
+				chain.doFilter(req, resp);
+				
+				return;
 			} else {
-				JSONObject jsonObject = customerService.validateSession(sessionId);
-				if (jsonObject != null) {
-					String loginUser=(String) jsonObject.get("customerid");				
-					request.setAttribute(LOGIN_USER, loginUser);
-					chain.doFilter(req, resp);
-					return;
-				} else {
-					response.sendError(HttpServletResponse.SC_FORBIDDEN);
-					return;
-				}
+				response.sendError(HttpServletResponse.SC_FORBIDDEN);
+				return;
 			}
 		}
 		

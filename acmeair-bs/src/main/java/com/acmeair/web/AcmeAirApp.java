@@ -10,6 +10,6 @@ import javax.ws.rs.ApplicationPath;
 @ApplicationPath("/rest/api")
 public class AcmeAirApp extends Application {
     public Set<Class<?>> getClasses() {
-        return new HashSet<Class<?>>(Arrays.asList(LoginREST.class));
+        return new HashSet<Class<?>>(Arrays.asList(BookingsREST.class));
     }
 }
