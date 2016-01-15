@@ -11,10 +11,12 @@ Source:
 
 - **acmeair-services**:  The Java data services interface definitions
 - **acmeair-service-mongo**:  A WebSphere eXtreme Scale data service implementation
-- **acmeair-webapp**:  The Web 2.0 application and associated Java REST services (monolithic or break out into micro-services below)
+- **acmeair-webapp**:  The Web 2.0 application and associated Java REST services (monolithic app)
+- **acmeair-mainapp**:  The Front End and Config MicroService application
 - **acmeair-as**:  The Authentication Java Rest MicroService application
 - **acmeair-cs**:  The Customer Java Rest MicroService application
-- **acmeair-fbs**:  The Flight Booking Java Rest MicroService application
+- **acmeair-fs**:  The Flight Java Rest MicroService application
+- **acmeair-bs**:  The Booking Java Rest MicroService application
 
 ## How to get started
 
