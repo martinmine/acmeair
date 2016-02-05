@@ -128,7 +128,7 @@ public class LoginREST {
 	private boolean validateCustomer(String login, String password) {
 		
 		//TODO: Place-Holder, Replace with Service Discovery/Registry
-		if (customerServiceLocation != null || customerServiceLocation != "") {
+		if (customerServiceLocation == null || customerServiceLocation == "") {
 			customerServiceLocation = "localhost/acmeair";
 		}
 				

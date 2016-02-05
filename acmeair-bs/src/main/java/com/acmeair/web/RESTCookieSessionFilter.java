@@ -80,7 +80,7 @@ public class RESTCookieSessionFilter implements Filter {
 			}
 			
 			//TODO: Place-Holder, Replace with Service Discovery/Registry
-			if (authServiceLocation != null || authServiceLocation != "") {
+			if (authServiceLocation == null || authServiceLocation == "") {
 				authServiceLocation = "localhost/acmeair";
 			}
 			
