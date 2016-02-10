@@ -10,7 +10,7 @@
     <!-- To access this server from a remote client add a host attribute to the following element, e.g. host="*" -->
     <httpEndpoint id="defaultHttpEndpoint"
                   host="*"
-                  httpPort="9093"
+                  httpPort="80"
                   httpsPort="9493" />
 
     <application id="acmeair-as" name="acmeair-as" type="war" location="acmeair-as-2.0.0-SNAPSHOT.war"></application>

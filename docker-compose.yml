@@ -1,9 +1,13 @@
 db:
+  container_name: db
   image: mongo
+  net: ${NETWORK}
   ports:
     - 27017:27017
 
-nginx:
+nginx2:
+  container_name: nginx2
+  net: ${NETWORK}
   restart: always
   build: ./nginx/
   ports:
@@ -16,44 +20,38 @@ nginx:
     - liberty3
     - liberty4
     - liberty5
-  links:
-    - liberty1:liberty1
-    - liberty2:liberty2
-    - liberty3:liberty3
-    - liberty4:liberty4
-    - liberty5:liberty5
 
 liberty1:
+  container_name: liberty1
+  net: ${NETWORK}
   build: ./acmeair-mainapp/
   environment:
     - LICENSE=accept
-  ports:
-    - 9090:9090
 
 liberty2:
+  container_name: liberty2
+  net: ${NETWORK}
   build: ./acmeair-as/
   environment:
     - LICENSE=accept
-  ports:
-    - 9093:9093
 
 liberty3:
+  container_name: liberty3
+  net: ${NETWORK}
   build: ./acmeair-bs/
   environment:
     - LICENSE=accept
-  ports:
-    - 9094:9094
 
 liberty4:
+  container_name: liberty4
+  net: ${NETWORK}
   build: ./acmeair-cs/
   environment:
     - LICENSE=accept
-  ports:
-    - 9091:9091
 
 liberty5:
+  container_name: liberty5
+  net: ${NETWORK}
   build: ./acmeair-fs/
   environment:
     - LICENSE=accept
-  ports:
-    - 9092:9092
