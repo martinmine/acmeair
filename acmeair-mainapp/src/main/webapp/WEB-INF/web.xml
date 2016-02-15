@@ -9,7 +9,7 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>com.acmeair.web.AppConfig</servlet-name>
-    <url-pattern>/rest/info/*</url-pattern>
+    <url-pattern>/rest/api/*</url-pattern>
   </servlet-mapping>
 </web-app>
 

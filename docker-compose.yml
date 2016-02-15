@@ -2,8 +2,21 @@ db:
   container_name: db
   image: mongo
   net: ${NETWORK}
-  ports:
-    - 27017:27017
+  
+db2:
+  container_name: db2
+  image: mongo
+  net: ${NETWORK}
+  
+db3:
+  container_name: db3
+  image: mongo
+  net: ${NETWORK}
+  
+db4:
+  container_name: db4
+  image: mongo
+  net: ${NETWORK}
 
 nginx2:
   container_name: nginx2
@@ -34,6 +47,8 @@ liberty2:
   build: ./acmeair-as/
   environment:
     - LICENSE=accept
+  volumes_from:
+    - db
 
 liberty3:
   container_name: liberty3
@@ -41,6 +56,8 @@ liberty3:
   build: ./acmeair-bs/
   environment:
     - LICENSE=accept
+  volumes_from:
+    - db2
 
 liberty4:
   container_name: liberty4
@@ -48,6 +65,8 @@ liberty4:
   build: ./acmeair-cs/
   environment:
     - LICENSE=accept
+  volumes_from:
+    - db3
 
 liberty5:
   container_name: liberty5
@@ -55,3 +74,5 @@ liberty5:
   build: ./acmeair-fs/
   environment:
     - LICENSE=accept
+  volumes_from:
+    - db4

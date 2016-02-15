@@ -43,6 +43,8 @@ public class RESTCookieSessionFilter implements Filter {
 	static String authServiceLocation = System.getenv("AUTH_SERVICE");
 	
 	private static final String AUTHCHECK_PATH = "/rest/api/login/authcheck/";
+	private static final String CONFIG_PATH = "/rest/api/bookings/config";
+	
 	private static String SESSIONID_COOKIE_NAME = "sessionid";
 		
 	@Inject
@@ -57,7 +59,17 @@ public class RESTCookieSessionFilter implements Filter {
 	public void doFilter(ServletRequest req, ServletResponse resp,	FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest request = (HttpServletRequest)req;
 		HttpServletResponse response = (HttpServletResponse)resp;	
-						
+				
+		String path = request.getContextPath() + request.getServletPath() + request.getPathInfo();
+	
+		
+		if (path.contains(CONFIG_PATH)) {
+			// if validating id, let the request flow
+			// TODO: need to secure this somehow probably
+			chain.doFilter(req, resp);
+			return;
+		}
+		
 		Cookie cookies[] = request.getCookies();
 		Cookie sessionCookie = null;
 

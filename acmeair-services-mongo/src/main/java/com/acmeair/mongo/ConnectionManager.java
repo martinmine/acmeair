@@ -46,6 +46,7 @@ public class ConnectionManager implements MongoConstants{
 		// Set default client options, and then check if there is a properties file.
 		String hostname = System.getenv("MONGO_HOST");
 		String portNumber = System.getenv("MONGO_PORT");
+		String dbname = System.getenv("MONGO_DBNAME");
 		
 		if (hostname == null)
 			hostname = "localhost";
@@ -55,7 +56,10 @@ public class ConnectionManager implements MongoConstants{
 		} else {
 			port=Integer.parseInt(portNumber);
 		}
-		String dbname = "acmeair";
+		
+		if (dbname == null)
+			dbname = "acmeair";
+		
 		String username = null;
 		String password = null;
 

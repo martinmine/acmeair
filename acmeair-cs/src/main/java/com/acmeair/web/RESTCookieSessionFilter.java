@@ -44,6 +44,8 @@ public class RESTCookieSessionFilter implements Filter {
 			
 	private static final String AUTHCHECK_PATH = "/rest/api/login/authcheck/";
 	private static final String VALIDATE_PATH = "/rest/api/customer/validateid";
+	private static final String CONFIG_PATH = "/rest/api/customer/config";
+	private static final String LOADER_PATH = "/rest/api/customer/loader";
 	
 	public static String SESSIONID_COOKIE_NAME = "sessionid";
 		
@@ -53,7 +55,6 @@ public class RESTCookieSessionFilter implements Filter {
 	@Override
 	public void destroy() {
 	}
-
 	
 	@Override
 	public void doFilter(ServletRequest req, ServletResponse resp,	FilterChain chain) throws IOException, ServletException {
@@ -62,8 +63,7 @@ public class RESTCookieSessionFilter implements Filter {
 		
 		String path = request.getContextPath() + request.getServletPath() + request.getPathInfo();
 	
-		
-		if (path.endsWith(VALIDATE_PATH))  {
+		if (path.endsWith(VALIDATE_PATH) || path.contains(CONFIG_PATH) || path.contains(LOADER_PATH)) {
 			// if validating id, let the request flow
 			// TODO: need to secure this somehow probably
 			chain.doFilter(req, resp);

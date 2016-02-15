@@ -14,5 +14,6 @@ EXPOSE 80
 
 ENV CUSTOMER_SERVICE=nginx2/acmeair
 ENV MONGO_HOST=db
+ENV MONGO_DBNAME=acmeair_sessiondb
 
 CMD ["/opt/ibm/wlp/bin/server", "run", "defaultServer"]

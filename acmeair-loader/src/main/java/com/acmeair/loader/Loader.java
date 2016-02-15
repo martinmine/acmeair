@@ -47,6 +47,21 @@ public class Loader {
 		return message;	
 	}
 	
+	public String loadCustomerDB(long numCustomers) {		
+		String message = "";
+		
+		System.setProperty("loader.numCustomers", Long.toString(numCustomers));
+		message = executeCustomerDB(numCustomers);
+		
+		return message;	
+	}
+	
+	public String loadFlightDB() {		
+		String message = "";
+			message = executeFlightDB();
+			return message;	
+	}
+	
 	
 	
 	public static void main(String args[]) throws Exception {
@@ -85,6 +100,43 @@ public class Loader {
 			e.printStackTrace();
 		}		
 		return "Loaded flights and "  +  numCustomers + " customers in " + length + " seconds";
+	}
+	
+	private String executeCustomerDB(long numCustomers) {
+		CustomerLoader customerLoader = new CustomerLoader();
+
+    	double length = 0;
+		try {
+			long start = System.currentTimeMillis();		
+			logger.info("Start loading " +  numCustomers + " customers");
+			customerLoader.loadCustomers(numCustomers);
+			long stop = System.currentTimeMillis();
+			logger.info("Finished loading in " + (stop - start)/1000.0 + " seconds");
+			length = (stop - start)/1000.0;
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}		
+		return "Loaded "  +  numCustomers + " customers in " + length + " seconds";
+	}
+	
+	private String executeFlightDB() {
+		FlightLoader flightLoader = new FlightLoader();
+		
+
+    	double length = 0;
+		try {
+			long start = System.currentTimeMillis();
+			logger.info("Start loading flights");
+			flightLoader.loadFlights();			
+			long stop = System.currentTimeMillis();
+			logger.info("Finished loading in " + (stop - start)/1000.0 + " seconds");
+			length = (stop - start)/1000.0;
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}		
+		return "Loaded flights in " + length + " seconds";
 	}
 	
 	

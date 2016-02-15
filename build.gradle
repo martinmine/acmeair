@@ -22,7 +22,7 @@ project(':acmeair-webapp') {
     dependencies {
         compile project(':acmeair-services')
         compile project(':acmeair-services-mongo')
-          compile project(':acmeair-loader')
+        compile project(':acmeair-loader')
         providedRuntime 'javax:javaee-web-api:7.0'
     }
 }
@@ -31,9 +31,7 @@ project(':acmeair-mainapp') {
     apply plugin: 'war'
 
     dependencies {
-        compile project(':acmeair-services')
-        compile project(':acmeair-services-mongo')
-          compile project(':acmeair-loader')
+    	compile project(':acmeair-services')
         providedRuntime 'javax:javaee-web-api:7.0'
     }
 }
@@ -54,6 +52,7 @@ project(':acmeair-cs') {
     dependencies {
         compile project(':acmeair-services')
         compile project(':acmeair-services-mongo')
+        compile project(':acmeair-loader')
         providedRuntime 'javax:javaee-web-api:7.0'
     }
 }
@@ -74,6 +73,7 @@ project(':acmeair-fs') {
     dependencies {
         compile project(':acmeair-services')
         compile project(':acmeair-services-mongo')
+        compile project(':acmeair-loader')
         providedRuntime 'javax:javaee-web-api:7.0'
     }
 }

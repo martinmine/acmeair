@@ -11,7 +11,7 @@ import javax.ws.rs.core.Response;
 import com.acmeair.loader.Loader;
 
 
-@Path("/loader")
+@Path("/customer/loader")
 public class LoaderREST {
 
 //	private static Logger logger = Logger.getLogger(LoaderREST.class.getName());
@@ -37,7 +37,7 @@ public class LoaderREST {
 	@Path("/load")
 	@Produces("text/plain")
 	public Response loadDB(@DefaultValue("-1") @QueryParam("numCustomers") long numCustomers) {	
-		String response = loader.loadDB(numCustomers);
+		String response = loader.loadCustomerDB(numCustomers);
 		return Response.ok(response).build();	
 	}
 
