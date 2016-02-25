@@ -96,11 +96,19 @@ public class Loader {
 	private String execute(long numCustomers) {
 		FlightLoader flightLoader = new FlightLoader();
 		CustomerLoader customerLoader = new CustomerLoader();
+		SessionLoader sessionLoader = new SessionLoader();
+		BookingLoader bookingLoader = new BookingLoader();
 
     	double length = 0;
 		try {
 			long start = System.currentTimeMillis();
 			logger.info("Start loading flights");
+			customerLoader.dropCustomers();
+			flightLoader.dropFlights();
+			sessionLoader.dropSessions();
+			bookingLoader.dropBookings();
+			
+			
 			flightLoader.loadFlights();
 			logger.info("Start loading " +  numCustomers + " customers");
 			customerLoader.loadCustomers(numCustomers);
