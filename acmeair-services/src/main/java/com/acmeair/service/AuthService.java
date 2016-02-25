@@ -90,4 +90,6 @@ public abstract class AuthService {
 	
 	public abstract Long countSessions();
 
+	public abstract void dropSessions(); 
+
 }

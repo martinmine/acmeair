@@ -1,25 +1,25 @@
-db:
-  container_name: db
+session_db1:
+  container_name: session_db1
   image: mongo
   net: ${NETWORK}
   
-db2:
-  container_name: db2
+booking_db1:
+  container_name: booking_db1
   image: mongo
   net: ${NETWORK}
   
-db3:
-  container_name: db3
+customer_db1:
+  container_name: customer_db1
   image: mongo
   net: ${NETWORK}
   
-db4:
-  container_name: db4
+flight_db1:
+  container_name: flight_db1
   image: mongo
   net: ${NETWORK}
 
-nginx2:
-  container_name: nginx2
+nginx1:
+  container_name: nginx1
   net: ${NETWORK}
   restart: always
   build: ./nginx/
@@ -28,51 +28,59 @@ nginx2:
   volumes:
     - /www/public
   volumes_from:
-    - liberty1
-    - liberty2
-    - liberty3
-    - liberty4
-    - liberty5
+    - main_service_liberty1
+    - auth_service_liberty1
+    - booking_service_liberty1
+    - customer_service_liberty1
+    - flight_service_liberty1
+    - support_service_liberty1
 
-liberty1:
-  container_name: liberty1
+main_service_liberty1:
+  container_name: main_service_liberty1
   net: ${NETWORK}
   build: ./acmeair-mainapp/
   environment:
     - LICENSE=accept
 
-liberty2:
-  container_name: liberty2
+auth_service_liberty1:
+  container_name: auth_service_liberty1
   net: ${NETWORK}
   build: ./acmeair-as/
   environment:
     - LICENSE=accept
   volumes_from:
-    - db
+    - session_db1
 
-liberty3:
-  container_name: liberty3
+booking_service_liberty1:
+  container_name: booking_service_liberty1
   net: ${NETWORK}
   build: ./acmeair-bs/
   environment:
     - LICENSE=accept
   volumes_from:
-    - db2
+    - booking_db1
 
-liberty4:
-  container_name: liberty4
+customer_service_liberty1:
+  container_name: customer_service_liberty1
   net: ${NETWORK}
   build: ./acmeair-cs/
   environment:
     - LICENSE=accept
   volumes_from:
-    - db3
+    - customer_db1
 
-liberty5:
-  container_name: liberty5
+flight_service_liberty1:
+  container_name: flight_service_liberty1
   net: ${NETWORK}
   build: ./acmeair-fs/
   environment:
     - LICENSE=accept
   volumes_from:
-    - db4
+    - flight_db1
+
+support_service_liberty1:
+  container_name: support_service_liberty1
+  build: ./acmeair-ss
+  net: ${NETWORK}
+  environment:
+    - LICENSE=accept

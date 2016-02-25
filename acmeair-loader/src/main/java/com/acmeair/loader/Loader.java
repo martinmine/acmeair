@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2013-2015 IBM Corp.
+* Copyright (c) 2013-2016 IBM Corp.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -61,7 +61,19 @@ public class Loader {
 			message = executeFlightDB();
 			return message;	
 	}
+	public String clearSessionDB() {		
+		String message = "";
+				
+		message = executeSessionDB();
+		
+		return message;	
+	}
 	
+	public String clearBookingDB() {		
+		String message = "";
+			message = executeBookingDB();
+			return message;	
+	}
 	
 	
 	public static void main(String args[]) throws Exception {
@@ -109,6 +121,7 @@ public class Loader {
 		try {
 			long start = System.currentTimeMillis();		
 			logger.info("Start loading " +  numCustomers + " customers");
+			customerLoader.dropCustomers();
 			customerLoader.loadCustomers(numCustomers);
 			long stop = System.currentTimeMillis();
 			logger.info("Finished loading in " + (stop - start)/1000.0 + " seconds");
@@ -128,6 +141,7 @@ public class Loader {
 		try {
 			long start = System.currentTimeMillis();
 			logger.info("Start loading flights");
+			flightLoader.dropFlights();		
 			flightLoader.loadFlights();			
 			long stop = System.currentTimeMillis();
 			logger.info("Finished loading in " + (stop - start)/1000.0 + " seconds");
@@ -138,6 +152,43 @@ public class Loader {
 		}		
 		return "Loaded flights in " + length + " seconds";
 	}
+	
+	private String executeSessionDB() {
+		SessionLoader sessionLoader = new SessionLoader();
+
+    	double length = 0;
+		try {
+			long start = System.currentTimeMillis();		
+			logger.info("Start clearing session");
+			sessionLoader.dropSessions();
+			long stop = System.currentTimeMillis();
+			logger.info("Finished clearing in " + (stop - start)/1000.0 + " seconds");
+			length = (stop - start)/1000.0;
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}		
+		return "Cleared sessions in " + length + " seconds";
+	}
+	
+	private String executeBookingDB() {
+		BookingLoader bookingLoader = new BookingLoader();
+
+    	double length = 0;
+		try {
+			long start = System.currentTimeMillis();		
+			logger.info("Start clearing session");
+			bookingLoader.dropBookings();
+			long stop = System.currentTimeMillis();
+			logger.info("Finished clearing in " + (stop - start)/1000.0 + " seconds");
+			length = (stop - start)/1000.0;
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}		
+		return "Cleared sessions in " + length + " seconds";
+	}
+	
 	
 	
 	private void lookupDefaults (){

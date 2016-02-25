@@ -33,6 +33,11 @@ public class FlightLoader {
 
 	private FlightService flightService = ServiceLocator.instance().getService(FlightService.class);
 
+	public void dropFlights() {				
+		flightService.dropFlights();
+}
+	
+	
 	public void loadFlights() throws Exception {
 		InputStream csvInputStream = FlightLoader.class.getResourceAsStream("/mileage.csv");
 		

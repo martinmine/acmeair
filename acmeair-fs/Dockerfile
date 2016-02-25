@@ -12,7 +12,7 @@ ADD ./build/libs/*.war /opt/ibm/wlp/usr/servers/defaultServer/apps
 
 EXPOSE 80
 
-ENV MONGO_HOST=db4
+ENV MONGO_HOST=flight_db1
 ENV MONGO_DBNAME=acmeair_flightdb
 
 CMD ["/opt/ibm/wlp/bin/server", "run", "defaultServer"]

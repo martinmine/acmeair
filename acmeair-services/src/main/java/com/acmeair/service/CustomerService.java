@@ -75,5 +75,7 @@ public abstract class CustomerService {
 	}
 			
 	public abstract Long count();
+
+	public abstract void dropCustomers();
 		
 }

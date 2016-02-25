@@ -1,5 +1,5 @@
 <!-- ***************************************************************************
-* Copyright (c) 2013-2015 IBM Corp.
+* Copyright (c) 2016 IBM Corp.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@
   <link rel="stylesheet" type="text/css" href="css/style.css">
   <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/dojo/1.7.1/dijit/themes/claro/claro.css">
   <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/dojo/1.7.1/dijit/themes/dijit.css">
-  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
   
   <script type="text/javascript" src="js/acmeair-common.js"></script>
   <script src="http://ajax.googleapis.com/ajax/libs/dojo/1.7.1/dojo/dojo.js" djConfig="parseOnLoad: true"></script>
@@ -43,6 +42,44 @@
     function pageLoaded() {
     	updateLoggedInUserWelcome();
     }
+  </script>
+  <script type="text/javascript">
+      function getDateString() {
+    	var now = new Date();
+  	  	return now.getHours() + ":" + ("0" + now.getMinutes()).slice(-2) + 
+  	  		":" + ("0" + now.getSeconds()).slice(-2);
+      }
+      
+      function newlinesToBreak(string) {
+    	  return string.replace(/(?:\r\n|\r|\n)/g,'<br/>');
+      }
+  	 
+	  var chatSocket = new WebSocket("ws://" +window.location.host + window.location.pathname.substring(0, window.location.pathname.indexOf("/",2))  + "/supportrequest");
+	  chatSocket.onmessage = function(event) {
+		var jsonObj = JSON.parse(event.data);
+		var displayMessage = "<b>" + jsonObj.agent + "</b>: " + getDateString() + " - " + 
+			newlinesToBreak(jsonObj.message);
+		
+		displaybox.innerHTML += "<div class=\"their-text\">"+displayMessage+"\n"+"</div>";
+		displaybox.scrollTop = displaybox.scrollHeight;
+	  }
+	  
+	  function sendChatMessage() {
+	  	var chatbox = document.getElementById("chatbox");
+	  	var displaybox = document.getElementById("displaybox");
+	  	var message = chatbox.value;
+	  	var displayMessage = newlinesToBreak(message);
+	  	var user = dojo.cookie("loggedinuser");
+	  	
+	  	if(user === undefined || user === null) user = "Me";
+	  	displayMessage = "<b>" + user + "</b>: " + getDateString()
+	  		+ " - " + displayMessage;
+	  	displaybox.innerHTML += "<div class=\"my-text\">"+displayMessage+"\n"+"</div>";
+	  	displaybox.scrollTop = displaybox.scrollHeight;
+	  	chatbox.value = "";
+	  	
+	    chatSocket.send(message);
+	  }
   </script>
 </head>
 
@@ -108,9 +145,21 @@
 		</div>
 		
 		<div class="content">
-			<img src="images/acmeAirplane.png" alt="home" /><br/>
-			<h1 style="margin: 15px 0 0 0;">Welcome to Acme Air</h1>
-			<p>This is a sample application for performance testing of light weight app servers, partionable data storage, Web 2.0 and mobile on the cloud.</p>
+			<div>
+	            <div id="displaybox" class="chatDisplay"></div>
+	            <div id="chatEntryArea">
+	            	<textarea class="chatDisplay chatEntry" id="chatbox" placeholder="Enter Text Here..."></textarea>
+	            	<button class="chatButton" id="chatButton" type="button" onclick="sendChatMessage()">Send</button>
+	            </div>
+	            <script>
+	            	document.getElementById("chatbox").addEventListener("keydown", function(e) {
+	      			  	if(e.keyCode == 13 && !e.shiftKey) { 
+	      			  		document.getElementById("chatButton").click();
+	      			  		e.preventDefault();
+	      			  	}
+	      	  		}, false);
+	            </script>
+	        </div>
 		</div>
 	</div>
 	<footer>

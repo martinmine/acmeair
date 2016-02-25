@@ -84,7 +84,8 @@
 		dijit.byId('customerSizeInput').set('value', loaderdata);
     }
     
-    function loadDB() {
+ <!-- load customers and then flights -->
+    function loadCustomerDB() {
     	showWaitDialog();
     	dojo.xhrGet({
     		content : {
@@ -93,7 +94,22 @@
     		url: basePath.concat('customer/loader/load'),
     		load: function(response, ioArgs) {
     			hideWaitDialog();
-    			alert('Database Loaded, response: ' + response);
+    			alert('Customer Database Loaded, response: ' + response);
+    		},
+    		error: function(response, ioArgs) {
+    			hideWaitDialog();
+    			alert('error loaddb, response: ' + response);
+    		}
+    	});
+    }
+    
+    function loadFlightDB() {
+    	showWaitDialog();
+    	dojo.xhrGet({
+    		url: basePath.concat('flights/loader/load'),
+    		load: function(response, ioArgs) {
+    			hideWaitDialog();
+    			alert('Flight Database Loaded, response: ' + response);
     		},
     		error: function(response, ioArgs) {
     			hideWaitDialog();
@@ -103,13 +119,29 @@
     	
     }
     
-    function loadDB2() {
+     function clearSessionDB() {
     	showWaitDialog();
     	dojo.xhrGet({
-    		url: basePath.concat('flights/loader/load'),
+    		url: basePath.concat('login/loader/load'),
     		load: function(response, ioArgs) {
     			hideWaitDialog();
-    			alert('Database Loaded, response: ' + response);
+    			alert('Session Database Cleared, response: ' + response);
+    		},
+    		error: function(response, ioArgs) {
+    			hideWaitDialog();
+    			alert('error loaddb, response: ' + response);
+    		}
+    	});
+    	
+    }
+    
+     function clearBookingDB() {
+    	showWaitDialog();
+    	dojo.xhrGet({
+    		url: basePath.concat('bookings/loader/load'),
+    		load: function(response, ioArgs) {
+    			hideWaitDialog();
+    			alert('Booking Database Cleared, response: ' + response);
     		},
     		error: function(response, ioArgs) {
     			hideWaitDialog();
@@ -199,8 +231,7 @@
 			<h2>Loader Configuration </h2>
 			<br/>
       		Number of Customers to Load: <input type="text" dojoType="dijit.form.TextBox" id="customerSizeInput" data-dojo-props="trim:true" required="true"></input><br/>
-      		<button dojoType="dijit.form.Button" id="loadDatabaseButton" onClick="loadDB()">Load the Customer Database</button>
-      		<button dojoType="dijit.form.Button" id="loadDatabaseButton2" onClick="loadDB2()">Load the Flight Database</button>
+      		<button dojoType="dijit.form.Button" id="loadDatabaseButton" onClick="clearSessionDB();clearBookingDB();loadCustomerDB();loadFlightDB();">(Re)Load the Database</button>
       		</br/>						
 		</div>
 	</div>

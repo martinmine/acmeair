@@ -15,25 +15,15 @@
 *******************************************************************************/
 package com.acmeair.loader;
 
-import com.acmeair.service.CustomerService;
+import com.acmeair.service.AuthService;
 import com.acmeair.service.ServiceLocator;
 
 
-public class CustomerLoader {
+public class SessionLoader {
 
-	private CustomerService customerService = ServiceLocator.instance().getService(CustomerService.class);
+	private AuthService authService = ServiceLocator.instance().getService(AuthService.class);
 
-	public void dropCustomers() {				
-			customerService.dropCustomers();
+	public void dropSessions() {				
+		authService.dropSessions();
 	}
-	
-	public void loadCustomers(long numCustomers) {				
-		
-		String addressJson =  "{streetAddress1 : \"123 Main St.\", streetAddress2 :null, city: \"Anytown\", stateProvince: \"NC\", country: \"USA\", postalCode: \"27617\"}";
-		
-		for (long ii = 0; ii < numCustomers; ii++) {
-			customerService.createCustomer("uid"+ii+"@email.com", "password", "GOLD", 1000000, 1000, "919-123-4567", "BUSINESS", addressJson);
-		}
-	}
-
 }

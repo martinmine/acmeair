@@ -9,15 +9,10 @@ import javax.ws.rs.core.Response;
 import com.acmeair.loader.Loader;
 
 
-@Path("/flights/loader")
+@Path("/bookings/loader")
 public class LoaderREST {
 
-//	private static Logger logger = Logger.getLogger(LoaderREST.class.getName());
-
-	
-/*
- * Disabling to test out the new acmeair code frist
- */
+	//	private static Logger logger = Logger.getLogger(LoaderREST.class.getName());
 
 	@Inject
 	private Loader loader;	
@@ -26,7 +21,7 @@ public class LoaderREST {
 	@Path("/load")
 	@Produces("text/plain")
 	public Response loadDB() {	
-		String response = loader.loadFlightDB();
+		String response = loader.clearBookingDB();
 		return Response.ok(response).build();	
 	}
 

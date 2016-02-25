@@ -65,4 +65,8 @@ public class AuthServiceImpl extends AuthService implements MongoConstants {
 		customerSession.deleteMany(eq("_id", sessionid));
 	}
 
+	@Override
+	public void dropSessions() {
+		customerSession.deleteMany(new Document());	
+	}
 }

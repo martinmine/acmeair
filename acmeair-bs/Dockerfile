@@ -12,8 +12,8 @@ ADD ./build/libs/*.war /opt/ibm/wlp/usr/servers/defaultServer/apps
 
 EXPOSE 80
 
-ENV AUTH_SERVICE=nginx2/acmeair
-ENV MONGO_HOST=db2
+ENV AUTH_SERVICE=nginx1/acmeair
+ENV MONGO_HOST=booking_db1
 ENV MONGO_DBNAME=acmeair_bookingdb
 
 CMD ["/opt/ibm/wlp/bin/server", "run", "defaultServer"]

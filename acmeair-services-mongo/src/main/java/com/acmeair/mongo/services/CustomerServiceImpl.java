@@ -105,5 +105,11 @@ public class CustomerServiceImpl extends CustomerService implements MongoConstan
 		}
 		return customerDoc.toJson();
 	}
+
+	@Override
+	public void dropCustomers() {
+		customer.deleteMany(new Document());
+		
+	}
 	
 }
