@@ -2,6 +2,7 @@ package com.acmeair.mongo;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -44,35 +45,32 @@ public class ConnectionManager implements MongoConstants{
 	private ConnectionManager (){
 
 		// Set default client options, and then check if there is a properties file.
-		String hostname = System.getenv("MONGO_HOST");
-		String portNumber = System.getenv("MONGO_PORT");
-		String dbname = System.getenv("MONGO_DBNAME");
-		
-		if (hostname == null)
-			hostname = "localhost";
-		int port;
-		if (portNumber == null) {
-			port = 27017;
-		} else {
-			port=Integer.parseInt(portNumber);
-		}
-		
-		if (dbname == null)
-			dbname = "acmeair";
-		
+		String hostname = "localhost";
+		int port = 27017;
+		String dbname = "acmeair";
 		String username = null;
 		String password = null;
 
 
 		Properties prop = new Properties();
 		String acmeairProps = System.getenv("ACMEAIR_PROPERTIES");
-
+		try {
+			if(acmeairProps != null){
+				prop.load(new FileInputStream(acmeairProps));			
+			}else {
+				prop.load(ConnectionManager.class.getResourceAsStream("/config.properties"));
+				acmeairProps = "OK";
+			}
+		}catch (IOException ex){
+			logger.info("Properties file does not exist" + ex.getMessage());
+			acmeairProps = null;
+		}
+		
 		ServerAddress dbAddress = null;
 		MongoClientOptions.Builder options = new MongoClientOptions.Builder();
 		if(acmeairProps != null){
 			try {
 				logger.info("Reading mongo.properties file");
-				prop.load(new FileInputStream(acmeairProps));
 				if (prop.containsKey("hostname")){
 					hostname = prop.getProperty("hostname");
 				}
@@ -113,7 +111,7 @@ public class ConnectionManager implements MongoConstants{
 					options.threadsAllowedToBlockForConnectionMultiplier(Integer.parseInt(prop.getProperty("threadsAllowedToBlockForConnectionMultiplier")));
 				}
 				
-			}catch (IOException ioe){
+			}catch (Exception ioe){
 				logger.severe("Exception when trying to read from the mongo.properties file" + ioe.getMessage());
 			}
 		}
@@ -131,12 +129,29 @@ public class ConnectionManager implements MongoConstants{
 				for (Object key : vcapServices.keySet()){
 					if (key.toString().startsWith("mongo")){
 						mongoServiceArray = (JSONArray) vcapServices.get(key);
+						logger.info("Service Type : MongoLAB - " + key.toString());
+						break;
+					}
+					if (key.toString().startsWith("user-provided")){
+						mongoServiceArray = (JSONArray) vcapServices.get(key);
+						logger.info("Service Type : MongoDB by Compost - " + key.toString());
 						break;
 					}
 				}
 				
 				if (mongoServiceArray == null) {
-					logger.severe("VCAP_SERVICES existed, but a mongo service was not definied.");
+					logger.info("VCAP_SERVICES existed, but a MongoLAB or MongoDB by COMPOST service was not definied. Trying DB resource");
+					//VCAP_SERVICES don't exist, so use the DB resource
+					dbAddress = new ServerAddress (hostname, port);
+
+					// If username & password exists, connect DB with username & password
+					if ((username == null)||(password == null)){
+						mongoClient = new MongoClient(dbAddress, builtOptions);
+					}else {
+						List<MongoCredential> credentials = new ArrayList<>();
+						credentials.add(MongoCredential.createCredential(username, dbname, password.toCharArray()));
+						mongoClient = new MongoClient(dbAddress,credentials, builtOptions);
+					}
 				} else {					
 					JSONObject mongoService = (JSONObject)mongoServiceArray.get(0); 
 					JSONObject credentials = (JSONObject)mongoService.get("credentials");
@@ -162,7 +177,8 @@ public class ConnectionManager implements MongoConstants{
 			}
 			
 			db = mongoClient.getDatabase(dbname);
-
+			logger.info("#### Mongo DB Server " + mongoClient.getAddress().getHost() + " ####");
+			logger.info("#### Mongo DB Port " + mongoClient.getAddress().getPort() + " ####");
 			logger.info("#### Mongo DB is created with DB name " + dbname + " ####");
 			logger.info("#### MongoClient Options ####");
 			logger.info("maxConnectionsPerHost : "+ builtOptions.getConnectionsPerHost());
