@@ -42,7 +42,7 @@ import com.acmeair.util.Util;
 public class RESTCookieSessionFilter implements Filter {
 	
 	static final String LOGIN_USER = "acmeair.login_user";
-	private static String authServiceLocation = ((System.getenv("AUTH_SERVICE") == null) ? Util.getServiceProxy() + "/auth-java/acmeair-as" : System.getenv("AUTH_SERVICE"));
+	private static String authServiceLocation = ((System.getenv("AUTH_SERVICE") == null) ? Util.getServiceProxy() + "/auth/acmeair-as" : System.getenv("AUTH_SERVICE"));
 
 	//private static String authServiceLocation = System.getenv("AUTH_SERVICE");
 			

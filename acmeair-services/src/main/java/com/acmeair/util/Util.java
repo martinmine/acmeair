@@ -86,11 +86,11 @@ public class Util {
 					try{
 						sendHeartbeat((String)linkJson.get("heartbeat"), BEARER_TOKEN, SLEEP_TIME);
 					}catch (Exception e){
-						System.out.println("HEARTBEAT FAILED WITH ERROR : " + e.getMessage() + " RE-REGISTERING");
+						System.out.println("HEARTBEAT FAILED AT " + e.getClass() + " WITH ERROR : " + e.getMessage() + " RE-REGISTERING");
 					}
 				} catch (Exception e) {
 					int sleepTime = 10000;
-					System.out.println("REGISTRATION FAILED WITH ERROR : " + e.getMessage() + " RE-REGISTERING AFTER " + sleepTime/1000 + " sec  SLEEP");	
+					System.out.println("REGISTRATION FAILED AT " + e.getClass() + " WITH ERROR : " + e.getMessage() + " RE-REGISTERING AFTER " + sleepTime/1000 + " sec  SLEEP");	
 					try {
 						Thread.sleep(sleepTime);
 					} catch (InterruptedException e1) {
@@ -168,7 +168,7 @@ public class Util {
 				return (String) endpointJson.get("value");
 			} catch (Exception e) {
 				int sleepTime = 10000;
-				System.out.println("FAILED TO GET THE SERVICE PROXY WITH ERROR : " + e.getMessage() + " RE-TRYING AFTER " + sleepTime/1000 + " sec  SLEEP");	
+				System.out.println("FAILED TO GET THE SERVICE PROXY AT " + e.getClass() + " WITH ERROR : " + e.getMessage() + " RE-TRYING AFTER " + sleepTime/1000 + " sec  SLEEP");	
 				try {
 					Thread.sleep(sleepTime);
 				} catch (InterruptedException e1) {

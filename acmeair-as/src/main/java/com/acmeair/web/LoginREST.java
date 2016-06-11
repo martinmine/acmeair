@@ -47,7 +47,7 @@ public class LoginREST {
 	public static String SESSIONID_COOKIE_NAME = "sessionid";
 	private AuthService authService = ServiceLocator.instance().getService(AuthService.class);
 	
-	private static String customerServiceLocation = ((System.getenv("CUSTOMER_SERVICE") == null) ? Util.getServiceProxy() + "/customer-java/acmeair-cs" : System.getenv("CUSTOMER_SERVICE"));
+	private static String customerServiceLocation = ((System.getenv("CUSTOMER_SERVICE") == null) ? Util.getServiceProxy() + "/customer/acmeair-cs" : System.getenv("CUSTOMER_SERVICE"));
 	//private static String customerServiceLocation = System.getenv("CUSTOMER_SERVICE");
 	
 	private static final String VALIDATE_PATH = "/rest/api/customer/validateid";
