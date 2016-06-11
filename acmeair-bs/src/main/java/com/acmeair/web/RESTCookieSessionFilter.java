@@ -37,11 +37,14 @@ import javax.ws.rs.core.Response;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
+import com.acmeair.util.Util;
+
 public class RESTCookieSessionFilter implements Filter {
 	
 	static final String LOGIN_USER = "acmeair.login_user";
-	static String authServiceLocation = System.getenv("AUTH_SERVICE");
-	
+	static String authServiceLocation = ((System.getenv("AUTH_SERVICE") == null) ? Util.getServiceProxy() + "/auth-java/acmeair-as" : System.getenv("AUTH_SERVICE"));
+	//static String authServiceLocation = System.getenv("AUTH_SERVICE");
+		
 	private static final String AUTHCHECK_PATH = "/rest/api/login/authcheck/";
 	private static final String CONFIG_PATH = "/rest/api/bookings/config";
 	private static final String LOADER_PATH = "/rest/api/bookings/loader";

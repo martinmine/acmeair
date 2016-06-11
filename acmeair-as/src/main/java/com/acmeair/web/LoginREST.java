@@ -39,6 +39,7 @@ import org.json.simple.JSONValue;
 
 import com.acmeair.service.AuthService;
 import com.acmeair.service.ServiceLocator;
+import com.acmeair.util.Util;
 
 @Path("/login")
 public class LoginREST {
@@ -46,7 +47,9 @@ public class LoginREST {
 	public static String SESSIONID_COOKIE_NAME = "sessionid";
 	private AuthService authService = ServiceLocator.instance().getService(AuthService.class);
 	
-	private static String customerServiceLocation = System.getenv("CUSTOMER_SERVICE");
+	private static String customerServiceLocation = ((System.getenv("CUSTOMER_SERVICE") == null) ? Util.getServiceProxy() + "/customer-java/acmeair-cs" : System.getenv("CUSTOMER_SERVICE"));
+	//private static String customerServiceLocation = System.getenv("CUSTOMER_SERVICE");
+	
 	private static final String VALIDATE_PATH = "/rest/api/customer/validateid";
 	
 	@POST

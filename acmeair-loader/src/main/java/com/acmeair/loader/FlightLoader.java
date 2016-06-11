@@ -89,7 +89,7 @@ public class FlightLoader {
 				String flightId = "AA" + flightNumber;			
 				flightService.storeFlightSegment(flightId, airportCode, toAirport, miles);
 				Date now = new Date();
-				for (int daysFromNow = 0; daysFromNow < MAX_FLIGHTS_PER_SEGMENT; daysFromNow++) {
+				for (int daysFromNow = -1; daysFromNow < MAX_FLIGHTS_PER_SEGMENT; daysFromNow++) {
 					Calendar c = Calendar.getInstance();
 					c.setTime(now);
 					c.set(Calendar.HOUR_OF_DAY, 0);
