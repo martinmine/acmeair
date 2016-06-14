@@ -61,7 +61,7 @@
 				returnDate: returnDate,
 				oneWay: oneWayChecked
 			},
-			url: 'rest/api/flights/queryflights',
+			url: 'http://' + window.location.host + '/flight/acmeair-fs/rest/api/flights/queryflights',
 			handleAs: "json",
 			load: function(response, ioArgs) {
 				if (response.tripFlights.length == 0) {
@@ -220,7 +220,7 @@
 		
 		dojo.xhrPost({
 			content : xhrContent,
-			url : 'rest/api/bookings/bookflights',
+			url: 'http://' + window.location.host + '/booking/acmeair-bs/rest/api/bookings/bookflights',
 			handleAs: "json",
 			load : function(response, ioArgs) {
 				dojo.byId("bookingToFlight").innerHTML = response.departBookingId;
