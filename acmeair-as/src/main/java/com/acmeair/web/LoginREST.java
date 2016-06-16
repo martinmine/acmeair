@@ -31,7 +31,7 @@ import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.NewCookie;
+//import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 
 import org.json.simple.JSONObject;
@@ -63,9 +63,8 @@ public class LoginREST {
 			
 			JSONObject sessionJson = authService.createSession(login);
 			String sessionId=(String) sessionJson.get("_id");
+								
 						
-			NewCookie sessCookie = new NewCookie(SESSIONID_COOKIE_NAME, sessionId);	
-
 			// TODO:  Need to fix the security issues here - they are pretty gross likely
 			
 			// TODO: The mobile client app requires JSON in the response. 
@@ -74,7 +73,10 @@ public class LoginREST {
 			//   example:  return Response.ok("{\"status\":\"logged-in\"}").cookie(sessCookie).build();
 			// - Or create another method which is identical to this one, except returns JSON response.
 			//   Have the web app use the original method, and the mobile client app use the new one.
-			return Response.ok("logged in").cookie(sessCookie).build();
+			// System.out.println("Setting " + SESSIONID_COOKIE_NAME + " to " + sessionId);
+			
+			// TODO, What is correct here? for now match the response cookie from Node (which seems to work).
+			return Response.ok("logged in").header("Set-Cookie", SESSIONID_COOKIE_NAME + "=" + sessionId + "; Path=/").build();
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -103,8 +105,9 @@ public class LoginREST {
 			// doing this will set the cookie to the empty string, but the browser will still send the cookie to future requests
 			// and the server will need to detect the value is invalid vs actually forcing the browser to time out the cookie and
 			// not send it to begin with
-			NewCookie sessCookie = new NewCookie(SESSIONID_COOKIE_NAME, "");
-			return Response.ok("logged out").cookie(sessCookie).build();
+			//NewCookie sessCookie = new NewCookie(SESSIONID_COOKIE_NAME, "");
+			
+			return Response.ok("logged out").header("Set-Cookie", SESSIONID_COOKIE_NAME + "=; Path=/").build();
 		}
 		catch (Exception e) {
 			e.printStackTrace();
