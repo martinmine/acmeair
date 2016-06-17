@@ -11,7 +11,10 @@
     <httpEndpoint id="defaultHttpEndpoint"
                   host="*"
                   httpPort="80"
-                  httpsPort="9493" />
+                  httpsPort="9493" >
+        <tcpOptions soReuseAddr="true"/> 
+		<httpOptions maxKeepAliveRequests="-1"/>
+	</httpEndpoint>
 
     <application name="acmeair-cs" context-root="acmeair-cs" type="war" location="acmeair-cs-2.0.0-SNAPSHOT.war"></application>
     <webContainer deferServletLoad="false"/>
