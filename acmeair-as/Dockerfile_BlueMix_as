@@ -1,5 +1,6 @@
-FROM websphere-liberty:kernel
+FROM registry.ng.bluemix.net/ibmliberty:javaee7
 COPY ./acmeair-as/server.xml /config/
+
 RUN installUtility install --acceptLicense defaultServer
 
 EXPOSE 80
