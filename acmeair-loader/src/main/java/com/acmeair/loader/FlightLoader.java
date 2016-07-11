@@ -28,7 +28,7 @@ import com.acmeair.AirportCodeMapping;
 
 public class FlightLoader {
 	
-	private static final int MAX_FLIGHTS_PER_SEGMENT = 30;
+	private static final int MAX_FLIGHTS_PER_SEGMENT = 5;
 	
 
 	private FlightService flightService = ServiceLocator.instance().getService(FlightService.class);
