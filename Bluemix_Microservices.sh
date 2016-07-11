@@ -15,10 +15,10 @@ docker push ${REGISTRY}/${NAME_SPACE}/acmeair_bookingservice
 docker push ${REGISTRY}/${NAME_SPACE}/acmeair_customerservice
 docker push ${REGISTRY}/${NAME_SPACE}/acmeair_flightservice
 
-#cf ic run -e SERVICE_NAME=main -e SD_URL=${SD_URL} -e SD_TOKEN=${SD_TOKEN} --name main_1 ${REGISTRY}/${NAME_SPACE}/acmeair_mainservice
-cf ic run -e CCS_BIND_APP=${MONGO_BRIDGE} -e SD_URL=${SD_URL} -e SD_TOKEN=${SD_TOKEN} --name Jauth_1     ${REGISTRY}/${NAME_SPACE}/acmeair_authservice
-cf ic run -e CCS_BIND_APP=${MONGO_BRIDGE} -e SD_URL=${SD_URL} -e SD_TOKEN=${SD_TOKEN} --name Jbooking_1  ${REGISTRY}/${NAME_SPACE}/acmeair_bookingservice
-cf ic run -e CCS_BIND_APP=${MONGO_BRIDGE} -e SD_URL=${SD_URL} -e SD_TOKEN=${SD_TOKEN} --name Jcustomer_1 ${REGISTRY}/${NAME_SPACE}/acmeair_customerservice
-cf ic run -e CCS_BIND_APP=${MONGO_BRIDGE} -e SD_URL=${SD_URL} -e SD_TOKEN=${SD_TOKEN} --name Jflight_1   ${REGISTRY}/${NAME_SPACE}/acmeair_flightservice
+cf ic run -m 256 -e SERVICE_NAME=main -e SD_URL=${SD_URL} -e SD_TOKEN=${SD_TOKEN} --name main_1 ${REGISTRY}/${NAME_SPACE}/acmeair_mainservice
+cf ic run -m 256 -e CCS_BIND_APP=${MONGO_BRIDGE} -e SD_URL=${SD_URL} -e SD_TOKEN=${SD_TOKEN} --name Jauth_1     ${REGISTRY}/${NAME_SPACE}/acmeair_authservice
+cf ic run -m 256 -e CCS_BIND_APP=${MONGO_BRIDGE} -e SD_URL=${SD_URL} -e SD_TOKEN=${SD_TOKEN} --name Jbooking_1  ${REGISTRY}/${NAME_SPACE}/acmeair_bookingservice
+cf ic run -m 256 -e CCS_BIND_APP=${MONGO_BRIDGE} -e SD_URL=${SD_URL} -e SD_TOKEN=${SD_TOKEN} --name Jcustomer_1 ${REGISTRY}/${NAME_SPACE}/acmeair_customerservice
+cf ic run -m 256 -e CCS_BIND_APP=${MONGO_BRIDGE} -e SD_URL=${SD_URL} -e SD_TOKEN=${SD_TOKEN} --name Jflight_1   ${REGISTRY}/${NAME_SPACE}/acmeair_flightservice
 
 
