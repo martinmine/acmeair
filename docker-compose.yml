@@ -27,13 +27,6 @@ nginx1:
     - "80:80"
   volumes:
     - /www/public
-  volumes_from:
-    - main_service_liberty1
-    - auth_service_liberty1
-    - booking_service_liberty1
-    - customer_service_liberty1
-    - flight_service_liberty1
-    - support_service_liberty1
 
 main_service_liberty1:
   container_name: main_service_liberty1
