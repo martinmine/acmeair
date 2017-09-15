@@ -1,0 +1,23 @@
+#!/bin/bash
+
+docker tag acmeairjava_nginx1 martinmine/acmeairjava_nginx1
+docker push martinmine/acmeairjava_nginx1
+
+docker tag acmeairjava_main_service_liberty1 martinmine/acmeairjava_main_service_liberty1
+docker push martinmine/acmeairjava_main_service_liberty1
+
+docker tag acmeairjava_auth_service_liberty1 martinmine/acmeairjava_auth_service_liberty1
+docker push martinmine/acmeairjava_auth_service_liberty1
+
+docker tag acmeairjava_booking_service_liberty1 martinmine/acmeairjava_booking_service_liberty1
+docker push martinmine/acmeairjava_booking_service_liberty1
+
+docker tag acmeairjava_customer_service_liberty1 martinmine/acmeairjava_customer_service_liberty1
+docker push martinmine/acmeairjava_customer_service_liberty1
+
+docker tag acmeairjava_flight_service_liberty1 martinmine/acmeairjava_flight_service_liberty1
+docker push martinmine/acmeairjava_flight_service_liberty1
+
+docker tag acmeairjava_support_service_liberty1 martinmine/acmeairjava_support_service_liberty1
+docker push martinmine/acmeairjava_support_service_liberty1
+
