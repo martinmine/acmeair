@@ -112,6 +112,4 @@ public class BookingsREST {
 			return Response.status(Status.INTERNAL_SERVER_ERROR).build();
 		}
 	}
-	
-
 }

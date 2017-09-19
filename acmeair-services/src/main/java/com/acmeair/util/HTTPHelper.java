@@ -2,9 +2,7 @@ package com.acmeair.util;
 
 
 import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
@@ -66,7 +64,7 @@ public class HTTPHelper {
         }
     }
 
-    public static CompletableFuture<String> execute(final HttpEntityEnclosingRequestBase request) {
+    public static CompletableFuture<String> execute(final HttpRequestBase request) {
         final CompletableFuture<String> future = new CompletableFuture<>();
         final CloseableHttpAsyncClient httpclient = getClient();
         httpclient.start();
