@@ -10,10 +10,14 @@ RUN rm -rf /opt/ibm/wlp/usr/servers/defaultServer/workarea
 
 ADD ./build/libs/*.war /opt/ibm/wlp/usr/servers/defaultServer/apps
 
+RUN apt-get update && apt-get install -y nginx-full
+RUN rm /etc/nginx/nginx.conf
+ADD conf /etc/nginx/
+
 EXPOSE 80
 
 ENV AUTH_SERVICE=auth_service_liberty1/acmeair-as
 ENV MONGO_HOST=customer_db1
 ENV MONGO_DBNAME=acmeair_customerdb
 
-CMD ["/opt/ibm/wlp/bin/server", "run", "defaultServer"]
+CMD ["/bin/bash", "-c", "nginx & /opt/ibm/wlp/bin/server run defaultServer"]
