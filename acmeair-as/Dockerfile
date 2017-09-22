@@ -12,7 +12,7 @@ ADD ./build/libs/*.war /opt/ibm/wlp/usr/servers/defaultServer/apps
 
 EXPOSE 80
 
-ENV CUSTOMER_SERVICE=customer_service_liberty1/acmeair-cs
+ENV CUSTOMER_SERVICE=customer-service-liberty1/acmeair-cs
 ENV MONGO_HOST=session_db1
 ENV MONGO_DBNAME=acmeair_sessiondb
 
