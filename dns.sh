@@ -8,5 +8,5 @@ do
     serverIp=$(echo $serverEntry | awk '{print $2}')
     serviceName=$(echo $serverEntry | awk '{print $3}')
     sed -i "s/${serviceName}/${serverIp}/g" ./acmeair-*/Dockerfile
-    sed -i "s/${serviceName}/${serverIp}/g" ./nginx/conf/nginx.conf
+    sed -i "s/_${serviceName}_/${serverIp}/g" ./nginx/conf/nginx.conf
 done < ~/Documents/acmeair-openstack/serverlist
