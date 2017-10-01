@@ -17,6 +17,7 @@ package com.acmeair.service;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
@@ -29,6 +30,8 @@ public abstract class AuthService {
 	
 	@Inject
 	protected KeyGenerator keyGenerator;
+
+	private static final Logger LOGGER = Logger.getLogger(AuthService.class.getName());
 	
 	
 		
@@ -46,6 +49,7 @@ public abstract class AuthService {
 			JSONObject timeJson = (JSONObject) new JSONParser().parse(timeoutString);
 			
 			if (now.getTime() > (Long)timeJson.get("$date")) {
+				LOGGER.severe("Session timed out, will remove " + sessionid);
 				removeSession(cSession);
 				return null;
 			}

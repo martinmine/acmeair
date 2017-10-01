@@ -28,11 +28,15 @@ import javax.ws.rs.core.Response.Status;
 import com.acmeair.service.BookingService;
 import com.acmeair.service.ServiceLocator;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 @Path("/bookings")
 public class BookingsREST {
 	
 	private BookingService bs = ServiceLocator.instance().getService(BookingService.class);
-	
+	private static final Logger LOGGER = Logger.getLogger(BookingsREST.class.getName());
+
 	@POST
 	@Consumes({"application/x-www-form-urlencoded"})
 	@Path("/bookflights")
@@ -105,10 +109,9 @@ public class BookingsREST {
 		try {
 			bs.cancelBooking(userid, number);
 			return Response.ok("booking " + number + " deleted.").build();
-					
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			return Response.status(Status.INTERNAL_SERVER_ERROR).build();
 		}
 	}

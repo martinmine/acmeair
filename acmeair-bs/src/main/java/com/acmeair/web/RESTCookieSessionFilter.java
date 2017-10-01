@@ -16,6 +16,7 @@
 package com.acmeair.web;
 
 import java.io.IOException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.enterprise.inject.spi.BeanManager;
@@ -26,7 +27,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.acmeair.util.HTTPHelper;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.util.EntityUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
@@ -56,62 +59,96 @@ public class RESTCookieSessionFilter implements Filter {
 	@Override
 	public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain)
 			throws IOException, ServletException {
-
 		HttpServletRequest request = (HttpServletRequest)req;
 		HttpServletResponse response = (HttpServletResponse)resp;
 
-		final String path = request.getContextPath() + request.getServletPath() + request.getPathInfo();
+		try {
+			final String path = request.getContextPath() + request.getServletPath() + request.getPathInfo();
 
-		if (path.contains(CONFIG_PATH) || path.contains(LOADER_PATH)) {
-			chain.doFilter(req, resp);
-			return;
-		}
+			if (path.contains(CONFIG_PATH) || path.contains(LOADER_PATH)) {
+				chain.doFilter(req, resp);
+				return;
+			}
 
-		final Cookie cookies[] = request.getCookies();
-		Cookie sessionCookie = null;
+			final Cookie cookies[] = request.getCookies();
+			Cookie sessionCookie = null;
 
-		if (cookies != null) {
-			for (Cookie c : cookies) {
-				if (c.getName().equals(SESSIONID_COOKIE_NAME)) {
-					sessionCookie = c;
-				}
+			if (cookies != null) {
+				for (Cookie c : cookies) {
+					if (c.getName().equals(SESSIONID_COOKIE_NAME)) {
+						sessionCookie = c;
+					}
 
-				if (sessionCookie != null) {
-					break;
+					if (sessionCookie != null) {
+						break;
+					}
 				}
 			}
-		}
-		
-		String sessionId = "";
-		if (sessionCookie!=null) // We need both cookie to work
-			sessionId= sessionCookie.getValue().trim();
-		// did this check as the logout currently sets the cookie value to "" instead of aging it out
-		// see comment in LogingREST.java
-		if (sessionId.equals("")) {
-			response.sendError(HttpServletResponse.SC_FORBIDDEN);
-			return;
-		}
 
-		final AsyncContext ac = request.startAsync();
-		//ac.addListener(new MyAsyncListener());
-		final String url = "http://" + authServiceLocation  + AUTHCHECK_PATH + sessionId;
+			if (sessionCookie == null) { // We need both cookie to work
+				response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+				return;
+			}
 
-		HTTPHelper.execute(new HttpGet(url)).thenAccept(r -> {
-			if (r != null) {
-				JSONObject jsonObject = (JSONObject)JSONValue.parse(r);
-				String loginUser = (String) jsonObject.get("customerid");
+			String sessionId = sessionCookie.getValue().trim();
 
-				ac.getRequest().setAttribute(LOGIN_USER, loginUser);
-				ac.dispatch();
-			} else {
+			// did this check as the logout currently sets the cookie value to "" instead of aging it out
+			// see comment in LogingREST.java
+			if (sessionId.equals("")) {
+				LOGGER.warning("No cookie set");
+				response.sendError(HttpServletResponse.SC_FORBIDDEN);
+				return;
+			}
+
+			final AsyncContext ac = request.startAsync();
+			//ac.addListener(new MyAsyncListener());
+			final String url = "http://" + authServiceLocation + AUTHCHECK_PATH + sessionId;
+
+			HTTPHelper.execute(new HttpGet(url)).thenAccept(r -> {
 				try {
-					response.sendError(HttpServletResponse.SC_FORBIDDEN);
-				} catch (IOException e) {
-					// ¯\_(ツ)_/¯
-					LOGGER.severe(e.toString());
+					if (r != null) {
+						JSONObject jsonObject = (JSONObject) JSONValue.parse(EntityUtils.toString(r.getEntity()));
+
+						if (jsonObject == null || r.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+							response.sendError(HttpServletResponse.SC_FORBIDDEN);
+							ac.complete();
+							return;
+						}
+
+						String loginUser = (String) jsonObject.get("customerid");
+
+						if (loginUser == null) {
+							response.sendError(HttpServletResponse.SC_FORBIDDEN);
+							ac.complete();
+						}
+
+						ac.getRequest().setAttribute(LOGIN_USER, loginUser);
+						ac.dispatch();
+					} else {
+						LOGGER.warning("No response");
+						try {
+							response.sendError(HttpServletResponse.SC_FORBIDDEN);
+							ac.complete();
+						} catch (IOException e) {
+							// ¯\_(ツ)_/¯
+							LOGGER.log(Level.SEVERE, e.getMessage(), e);
+						}
+					}
 				}
-			}
-		});
+				catch (Exception e) {
+					LOGGER.log(Level.SEVERE, e.getMessage(), e);
+					try {
+						response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+						ac.complete();
+					} catch (IOException e1) {
+						LOGGER.log(Level.SEVERE, e1.getMessage(), e1);
+					}
+				}
+			});
+		}
+		catch (Exception e) {
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+		}
 	}
 
 	@Override

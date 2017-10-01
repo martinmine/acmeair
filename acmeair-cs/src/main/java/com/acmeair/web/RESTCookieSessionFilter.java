@@ -16,6 +16,7 @@
 package com.acmeair.web;
 
 import java.io.IOException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.enterprise.inject.spi.BeanManager;
@@ -28,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.acmeair.util.HTTPHelper;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.util.EntityUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
@@ -99,19 +101,44 @@ import com.acmeair.util.Util;
 		final String url = "http://" + authServiceLocation  + AUTHCHECK_PATH + sessionId;
 
 		HTTPHelper.execute(new HttpGet(url)).thenAccept(r -> {
-			if (r != null) {
-				JSONObject jsonObject = (JSONObject)JSONValue.parse(r);
-				String loginUser = (String) jsonObject.get("customerid");
+			try {
+				if (r != null) {
+					JSONObject jsonObject = (JSONObject) JSONValue.parse(EntityUtils.toString(r.getEntity()));
 
-				ac.getRequest().setAttribute(LOGIN_USER, loginUser);
-				ac.dispatch();
-			} else {
+					if (jsonObject == null) {
+						response.sendError(HttpServletResponse.SC_FORBIDDEN);
+						ac.complete();
+						return;
+					}
+
+					String loginUser = (String) jsonObject.get("customerid");
+
+					if (loginUser == null) {
+						response.sendError(HttpServletResponse.SC_FORBIDDEN);
+						ac.complete();
+					}
+
+					ac.getRequest().setAttribute(LOGIN_USER, loginUser);
+					ac.dispatch();
+				} else {
+					try {
+						response.sendError(HttpServletResponse.SC_FORBIDDEN);
+						ac.complete();
+					} catch (IOException e) {
+						// ¯\_(ツ)_/¯
+						LOGGER.log(Level.SEVERE, e.getMessage(), e);
+					}
+				}
+			}
+			catch (Exception e) {
+				LOGGER.log(Level.SEVERE, e.getMessage(), e);
+
 				try {
 					response.sendError(HttpServletResponse.SC_FORBIDDEN);
-				} catch (IOException e) {
-					// ¯\_(ツ)_/¯
-					LOGGER.severe(e.toString());
+				} catch (IOException e1) {
+					LOGGER.log(Level.SEVERE, e1.getMessage(), e1);
 				}
+				ac.complete();
 			}
 		});
 	}

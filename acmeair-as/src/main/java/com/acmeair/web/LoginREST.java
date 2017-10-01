@@ -19,6 +19,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.logging.Logger;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.CookieParam;
@@ -38,6 +39,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
@@ -51,7 +53,7 @@ public class LoginREST {
 	public static String SESSIONID_COOKIE_NAME = "sessionid";
 	private AuthService authService = ServiceLocator.instance().getService(AuthService.class);
 	
-	
+	private static final Logger LOGGER = Logger.getLogger(LoginREST.class.getName());
 	private static String customerServiceLocation = ((System.getenv("CUSTOMER_SERVICE") == null) ? Util.getServiceProxy() + "/customer/acmeair-cs" : System.getenv("CUSTOMER_SERVICE"));
 	//private static String customerServiceLocation = System.getenv("CUSTOMER_SERVICE");
 	
@@ -88,7 +90,7 @@ public class LoginREST {
 			response.resume(Response.ok("logged in").header("Set-Cookie", SESSIONID_COOKIE_NAME + "=" + sessionId + "; Path=/").build());
 		});
 	}
-	
+
 	@GET
 	@Path("/logout")
 	@Produces("text/plain")
@@ -96,9 +98,10 @@ public class LoginREST {
 		try {
 			// TODO: seems to be a bug with chrome on the sessionid. This has always existed...
 			// Looks like a difference between how the node.js app and java app handle cookies.
-			if (sessionid.equals(""))
-			{
-				System.out.println("sessionid is empty...");
+			if (sessionid.equals("")) {
+				LOGGER.severe("Session ID is empty");
+				return Response.status(Response.Status.BAD_REQUEST).build();
+				//System.out.println("sessionid is empty...");
 			} else  {
 				authService.invalidateSession(sessionid);
 			}	
@@ -126,10 +129,13 @@ public class LoginREST {
 	public Response validateSession(@PathParam("tokenid") String tokenid) {
 				
 		JSONObject sessionJson = authService.validateSession(tokenid);
+		if (sessionJson == null) {
+			return Response.status(Response.Status.FORBIDDEN).build();
+		}
 		String customerid = (String) sessionJson.get("customerid");
 		
 		if (customerid == null) {
-			return null;
+			return Response.status(Response.Status.FORBIDDEN).build();
 		} else {
 			return Response.ok(sessionJson.toString()).build();
 		}
@@ -156,7 +162,7 @@ public class LoginREST {
 
 		HTTPHelper.execute(request).thenAccept(output -> {
 			try {
-				final JSONObject jsonObject = (JSONObject) JSONValue.parse(output);
+				final JSONObject jsonObject = (JSONObject) JSONValue.parse(EntityUtils.toString(output.getEntity()));
 				String validCustomer = (String) jsonObject.get("validCustomer");
 
 				future.complete(validCustomer.equals("true"));

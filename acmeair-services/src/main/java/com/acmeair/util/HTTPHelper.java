@@ -64,8 +64,8 @@ public class HTTPHelper {
         }
     }
 
-    public static CompletableFuture<String> execute(final HttpRequestBase request) {
-        final CompletableFuture<String> future = new CompletableFuture<>();
+    public static CompletableFuture<HttpResponse> execute(final HttpRequestBase request) {
+        final CompletableFuture<HttpResponse> future = new CompletableFuture<>();
         final CloseableHttpAsyncClient httpclient = getClient();
         httpclient.start();
 
@@ -74,7 +74,7 @@ public class HTTPHelper {
             @Override
             public void completed(final HttpResponse response) {
                 try {
-                    future.complete(EntityUtils.toString(response.getEntity()));
+                    future.complete(response);
                     freeClient(httpclient);
                 } catch (IOException e) {
                     future.completeExceptionally(e);
