@@ -3,9 +3,11 @@ package com.acmeair.mongo.services;
 import static com.mongodb.client.model.Filters.eq;
 
 import java.util.Date;
+import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
 
+import com.mongodb.client.MongoIterable;
 import org.bson.Document;
 
 
@@ -21,7 +23,7 @@ import com.mongodb.client.MongoDatabase;
 @DataService(name=MongoConstants.KEY,description=MongoConstants.KEY_DESCRIPTION)
 public class AuthServiceImpl extends AuthService implements MongoConstants {	
 		
-//	private final static Logger logger = Logger.getLogger(CustomerService.class.getName()); 
+	private final static Logger LOGGER = Logger.getLogger(AuthServiceImpl.class.getName());
 	
 	private MongoCollection<Document> customerSession;
 	
@@ -38,12 +40,17 @@ public class AuthServiceImpl extends AuthService implements MongoConstants {
 	
 	@Override
 	protected String getSession(String sessionid){
-		return customerSession.find(eq("_id", sessionid)).first().toJson();
+		Document t = customerSession.find(eq("_id", sessionid)).first();
+		if (t != null)
+			return t.toJson();
+		else
+			return null;
 	}
 	
 	@Override
 	protected void removeSession(String sessionJson){
 		new Document();
+		LOGGER.severe("ERASING " + sessionJson);
 		customerSession.deleteMany(Document.parse(sessionJson));
 	}
 	
@@ -61,7 +68,8 @@ public class AuthServiceImpl extends AuthService implements MongoConstants {
 	}
 
 	@Override
-	public void invalidateSession(String sessionid) {		
+	public void invalidateSession(String sessionid) {
+		LOGGER.severe("DELETING " + sessionid);
 		customerSession.deleteMany(eq("_id", sessionid));
 	}
 

@@ -100,14 +100,11 @@ public class BookingServiceImpl implements BookingService, MongoConstants {
 
 	@Override
 	public void cancelBooking(String user, String bookingId) {
-		if(logger.isLoggable(Level.FINE)){
+		if (logger.isLoggable(Level.FINE)){
 			logger.fine("cancelBooking _id : " + bookingId);
 		}
-		try{
-			booking.deleteMany(eq("_id", bookingId));
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+
+		booking.deleteMany(eq("_id", bookingId));
 	}
 	
 	
