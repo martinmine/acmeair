@@ -40,7 +40,7 @@ public class BookingsREST {
 	@POST
 	@Consumes({"application/x-www-form-urlencoded"})
 	@Path("/bookflights")
-	@Produces("text/plain")
+	@Produces("application/json")
 	public /*BookingInfo*/ Response bookFlights(
 			@FormParam("userid") String userid,
 			@FormParam("toFlightId") String toFlightId,
@@ -64,38 +64,25 @@ public class BookingsREST {
 			return Response.ok(bookingInfo).build();
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
 			return Response.status(Status.INTERNAL_SERVER_ERROR).build();
 		}
 	}
 	
 	@GET
 	@Path("/bybookingnumber/{userid}/{number}")
-	@Produces("text/plain")
+	@Produces("application/json")
 	public String getBookingByNumber(
 			@PathParam("number") String number,
 			@PathParam("userid") String userid) {
-		try {
-			return bs.getBooking(userid, number);
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
+		return bs.getBooking(userid, number);
 	}
 
 	@GET
 	@Path("/byuser/{user}")
-	@Produces("text/plain")
+	@Produces("application/json")
 	public String getBookingsByUser(@PathParam("user") String user) {
-		
-		try {
-			return  bs.getBookingsByUser(user).toString();
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
+		return bs.getBookingsByUser(user).toString();
 	}
 
 
